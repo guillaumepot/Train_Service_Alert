@@ -1,5 +1,6 @@
 services:
 
+  # ----- Kafka -----
   kafka1:
     image: confluentinc/cp-kafka:latest
     container_name: kafka
@@ -71,5 +72,27 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092,kafka2:29093
     depends_on:
       - kafka1
+    profiles:
+      - pipeline
+
+
+  # ----- Redis -----
+  redis:
+    container_name: redis
+    hostname: redis
+    image: redis/redis-stack:latest
+    volumes:
+      - ./data/redis:/data
+      - ./src/redis/redis_7.2.conf:/etc/redis_conf/redis_7.2.conf
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 15s
+      timeout: 13s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped  
+    command: [ "redis-server", "/etc/redis_conf/redis_7.2.conf" ]
     profiles:
       - pipeline
