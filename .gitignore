@@ -2,10 +2,12 @@
 __pycache__/
 .pytest_cache/
 .ipynb_checkpoints
+.ruff_cache/
 
 # Logs
 *.log
 
 # Environments
 .env
+.venv/
 venv/
