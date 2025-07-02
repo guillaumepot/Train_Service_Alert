@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+.pytest_cache/
+.ipynb_checkpoints
+
+# Logs
+*.log
+
+# Environments
+.env
+venv/

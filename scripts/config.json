@@ -1,0 +1,10 @@
+{
+    "github_username": "guillaumepot",
+    "repository_name": "Train_Service_Alert",
+    "demo_url": "#",
+    "project": {
+        "name": "Train Service Alert",
+        "logo": "images/logo.jpeg",
+        "description": "A Data streaming tool to monitor French train service alerts."
+    }
+}

@@ -1,14 +1,14 @@
 <!-- BADGES -->
-[contributors_badge]: https://img.shields.io/github/contributors/guillaumepot/Train_Service_Alert.svg?style=for-the-badge
-[contributors_url]: https://github.com/guillaumepot/Train_Service_Alert/graphs/contributors
-[forks_badge]: https://img.shields.io/github/forks/guillaumepot/Train_Service_Alert.svg?style=for-the-badge
-[forks_url]: https://github.com/guillaumepot/Train_Service_Alert/network/members
-[stars_badge]: https://img.shields.io/github/stars/guillaumepot/Train_Service_Alert.svg?style=for-the-badge
-[stars_url]: https://github.com/guillaumepot/Train_Service_Alert/stargazers
-[issues_badge]: https://img.shields.io/github/issues/guillaumepot/Train_Service_Alert.svg?style=for-the-badge
-[issues_url]: https://github.com/guillaumepot/Train_Service_Alert/issues
-[license_badge]: https://img.shields.io/github/license/guillaumepot/Train_Service_Alert.svg?style=for-the-badge
-[license_url]: https://github.com/guillaumepot/Train_Service_Alert/blob/master/LICENSE.txt
+[contributors_badge]: https://img.shields.io/github/contributors/{{github_username}}/{{repository_name}}.svg?style=for-the-badge
+[contributors_url]: https://github.com/{{github_username}}/{{repository_name}}/graphs/contributors
+[forks_badge]: https://img.shields.io/github/forks/{{github_username}}/{{repository_name}}.svg?style=for-the-badge
+[forks_url]: https://github.com/{{github_username}}/{{repository_name}}/network/members
+[stars_badge]: https://img.shields.io/github/stars/{{github_username}}/{{repository_name}}.svg?style=for-the-badge
+[stars_url]: https://github.com/{{github_username}}/{{repository_name}}/stargazers
+[issues_badge]: https://img.shields.io/github/issues/{{github_username}}/{{repository_name}}.svg?style=for-the-badge
+[issues_url]: https://github.com/{{github_username}}/{{repository_name}}/issues
+[license_badge]: https://img.shields.io/github/license/{{github_username}}/{{repository_name}}.svg?style=for-the-badge
+[license_url]: https://github.com/{{github_username}}/{{repository_name}}/blob/master/LICENSE.txt
 [linkedin_badge]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin_url]: https://linkedin.com/in/062guillaumepot
 
@@ -27,7 +27,7 @@
 <!-- README -->
 <a id="readme-top"></a>
 
-# Train Service Alert
+# {{project.name}}
 
 [![Contributors][contributors_badge]][contributors_url]
 [![Forks][forks_badge]][forks_url]
@@ -39,28 +39,28 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/guillaumepot/Train_Service_Alert">
-    <img src="images/logo.jpeg" alt="Logo" width="150" height="150">
+  <a href="https://github.com/{{github_username}}/{{repository_name}}">
+    <img src="{{project.logo}}" alt="Logo" width="150" height="150">
   </a>
 </div>
 
 <!-- PROJECT DESCRIPTION -->
 <p align="center" style="font-size: 1.2rem; font-weight: 300; color: #666;">
-  A Data streaming tool to monitor French train service alerts.
+  {{project.description}}
 </p>
 
 <!-- PROJECT INFO -->
 <div>
   <p align="center">
     <br />
-    <a href="https://github.com/guillaumepot/Train_Service_Alert/blob/main/docs/README.md"><strong>Explore the docs</strong></a>
+    <a href="https://github.com/{{github_username}}/{{repository_name}}/blob/main/docs/README.md"><strong>Explore the docs</strong></a>
     <br />
     <br />
-    <a href="#">View Demo</a>
+    <a href="{{demo_url}}">View Demo</a>
     ·
-    <a href="https://github.com/guillaumepot/Train_Service_Alert/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
+    <a href="https://github.com/{{github_username}}/{{repository_name}}/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
     ·
-    <a href="https://github.com/guillaumepot/Train_Service_Alert/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+    <a href="https://github.com/{{github_username}}/{{repository_name}}/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
   </p>
 </div>
 
