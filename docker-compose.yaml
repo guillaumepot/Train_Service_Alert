@@ -1,0 +1,75 @@
+services:
+
+  kafka1:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    hostname: kafka
+    ports:
+      - "9092:9092"
+      - "9192:9192"
+    environment:
+      KAFKA_KRAFT_MODE: "true"
+      KAFKA_PROCESS_ROLES: controller,broker
+      KAFKA_NODE_ID: 1
+      CLUSTER_ID: "541739ba-e827-4c5f-8e15-fdc05a4a9052"
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,DOCKER://0.0.0.0:29092,CONTROLLER://0.0.0.0:9192
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092, DOCKER://kafka:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,DOCKER:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:9192, 2@kafka2:9193"
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_LOG_RETENTION_HOURS: 72
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./data/kafka/broker1:/var/lib/kafka/data
+    profiles:
+      - pipeline
+
+  kafka2:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka2
+    hostname: kafka2
+    ports:
+      - "9093:9093"
+      - "9193:9193"
+    environment:
+      KAFKA_KRAFT_MODE: "true"
+      KAFKA_PROCESS_ROLES: controller,broker
+      KAFKA_NODE_ID: 2
+      CLUSTER_ID: "541739ba-e827-4c5f-8e15-fdc05a4a9052"
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9093,DOCKER://0.0.0.0:29093,CONTROLLER://0.0.0.0:9193
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9093, DOCKER://kafka2:29093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,DOCKER:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:9192, 2@kafka2:9193"
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_LOG_RETENTION_HOURS: 168
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./data/kafka/broker2:/var/lib/kafka/data
+    depends_on:
+      - kafka1
+    profiles:
+      - pipeline
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    hostname: kafka-ui
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092,kafka2:29093
+    depends_on:
+      - kafka1
+    profiles:
+      - pipeline
