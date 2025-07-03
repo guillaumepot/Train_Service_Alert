@@ -184,11 +184,16 @@ if __name__ == "__main__":
     KAFKA_BROKERS = data_sources['kafka_brokers']
     del data_sources
 
+    # Wait to let Kafka & Redis to be ready in case of restart
+    time.sleep(60)
+
+    # Redis engine 
+    redis_engine = RedisEngine(host = REDIS_HOST, port = REDIS_PORT)
+
     # Redis engine 
     redis_engine = RedisEngine(host = REDIS_HOST, port = REDIS_PORT)
 
     # Start extraction loop
-    time.sleep(120) # Wait to let Kafka & Redis to be ready in case of restart
     while True:
         main()
         # Wait

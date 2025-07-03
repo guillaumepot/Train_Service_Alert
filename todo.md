@@ -1,4 +1,3 @@
-- Producer docker: Tester container et logs
 
 PUIS:
 - - Ingestion BDD (consumer)

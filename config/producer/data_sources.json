@@ -2,7 +2,7 @@
     "gtfs_url": "https://eu.ftp.opendatasoft.com/sncf/plandata/export_gtfs_voyages.zip",
     "gtfs_rt_tu_url": "https://proxy.transport.data.gouv.fr/resource/sncf-all-gtfs-rt-trip-updates",
     "gtfs_rt_sa_url": "https://proxy.transport.data.gouv.fr/resource/sncf-gtfs-rt-service-alerts",
-    "redis_host": "localhost",
+    "redis_host": "redis",
     "redis_port": 6379,
-    "kafka_brokers": ["localhost:29092", "localhost:29093"]
+    "kafka_brokers": ["kafka1:29092", "kafka2:29093"]
 }

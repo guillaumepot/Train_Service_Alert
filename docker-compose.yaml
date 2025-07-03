@@ -3,8 +3,8 @@ services:
   # ----- Kafka -----
   kafka1:
     image: confluentinc/cp-kafka:latest
-    container_name: kafka
-    hostname: kafka
+    container_name: kafka1
+    hostname: kafka1
     # ports:
     #   - "9092:9092"
     #   - "9192:9192"
@@ -69,7 +69,7 @@ services:
       - "8080:8080"
     environment:
       KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092,kafka2:29093
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka1:29092,kafka2:29093
     depends_on:
       - kafka1
     profiles:
