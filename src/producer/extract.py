@@ -7,11 +7,17 @@ from google.transit import gtfs_realtime_pb2
 from google.protobuf.json_format import MessageToDict
 from kafka import KafkaProducer
 import json
+import os
 import requests
 import time
 from typing import List
 
 from RedisEngine import RedisEngine
+
+
+DATA_SOURCES_FILEPATH = os.getenv('DATA_SOURCES_FILEPATH', 'config/data_sources.json')
+
+
 
 def fetch_gtfs_rt(url:str) -> gtfs_realtime_pb2.FeedMessage:
     """
@@ -169,18 +175,20 @@ def main():
 
 if __name__ == "__main__":
     # Fetch data sources URL
-    with open('src/data_sources.json', 'r') as f:
+    with open(DATA_SOURCES_FILEPATH, 'r') as f:
         data_sources = json.load(f)
-        GTFS_RT_TU_URL = data_sources['gtfs_rt_tu_url']
-        GTFS_RT_SA_URL = data_sources['gtfs_rt_sa_url']
-        REDIS_HOST = data_sources['redis_host']
-        REDIS_PORT = data_sources['redis_port']
-        KAFKA_BROKERS = data_sources['kafka_brokers']
+    GTFS_RT_TU_URL = data_sources['gtfs_rt_tu_url']
+    GTFS_RT_SA_URL = data_sources['gtfs_rt_sa_url']
+    REDIS_HOST = data_sources['redis_host']
+    REDIS_PORT = data_sources['redis_port']
+    KAFKA_BROKERS = data_sources['kafka_brokers']
+    del data_sources
 
     # Redis engine 
     redis_engine = RedisEngine(host = REDIS_HOST, port = REDIS_PORT)
 
     # Start extraction loop
+    time.sleep(120) # Wait to let Kafka & Redis to be ready in case of restart
     while True:
         main()
         # Wait

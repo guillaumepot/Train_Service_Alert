@@ -4,5 +4,5 @@
     "gtfs_rt_sa_url": "https://proxy.transport.data.gouv.fr/resource/sncf-gtfs-rt-service-alerts",
     "redis_host": "localhost",
     "redis_port": 6379,
-    "kafka_brokers": ["localhost:9092", "localhost:9093"]
+    "kafka_brokers": ["localhost:29092", "localhost:29093"]
 }

@@ -5,9 +5,9 @@ services:
     image: confluentinc/cp-kafka:latest
     container_name: kafka
     hostname: kafka
-    ports:
-      - "9092:9092"
-      - "9192:9192"
+    # ports:
+    #   - "9092:9092"
+    #   - "9192:9192"
     environment:
       KAFKA_KRAFT_MODE: "true"
       KAFKA_PROCESS_ROLES: controller,broker
@@ -34,9 +34,9 @@ services:
     image: confluentinc/cp-kafka:latest
     container_name: kafka2
     hostname: kafka2
-    ports:
-      - "9093:9093"
-      - "9193:9193"
+    # ports:
+    #   - "9093:9093"
+    #   - "9193:9193"
     environment:
       KAFKA_KRAFT_MODE: "true"
       KAFKA_PROCESS_ROLES: controller,broker
@@ -81,8 +81,12 @@ services:
       context: ./src/producer
       dockerfile: Dockerfile
     image: gtfs-rt-producer:latest
+    container_name: gtfs-rt-producer
     volumes:
       - ./logs/producer:/app/logs
+      - ./config/producer/data_sources.json:/app/config/data_sources.json
+    environment:
+      - DATA_SOURCES_FILEPATH=/app/config/data_sources.json
     # ports:
     #   - "9991:9991"
     restart: on-failure
@@ -98,8 +102,6 @@ services:
     command: /bin/sh -c "python extract.py > /app/logs/app.log 2>&1"
     profiles:
       - pipeline
-
-
 
 
   # ----- Redis -----
