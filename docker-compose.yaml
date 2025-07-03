@@ -84,7 +84,7 @@ services:
     container_name: gtfs-rt-producer
     volumes:
       - ./logs/producer:/app/logs
-      - ./config/producer/data_sources.json:/app/config/data_sources.json
+      - ./config/data_sources.json:/app/config/data_sources.json
     environment:
       - DATA_SOURCES_FILEPATH=/app/config/data_sources.json
     # ports:
@@ -99,7 +99,7 @@ services:
       options:
         max-size: "5m"
         max-file: "2"
-    command: /bin/sh -c "python extract.py > /app/logs/app.log 2>&1"
+    command: /bin/sh -c "python producer.py > /app/logs/app.log 2>&1"
     profiles:
       - pipeline
 

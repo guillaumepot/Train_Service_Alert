@@ -2,11 +2,11 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src/producer')))
 from unittest.mock import patch
-from src.producer.extract import fetch_gtfs_rt, extract_ids_and_trip_updates, is_already_sent
+from src.producer.producer import fetch_gtfs_rt, extract_ids_and_trip_updates, is_already_sent
 
 # --- fetch_gtfs_rt ---
 def test_fetch_gtfs_rt_returns_none_on_error():
-    with patch('src.producer.extract.requests.get', side_effect = Exception('fail')):
+    with patch('src.producer.producer.requests.get', side_effect = Exception('fail')):
         result = fetch_gtfs_rt('http://bad.url')
         assert result is None
 
@@ -33,7 +33,7 @@ class FakeFeed:
 
 def test_extract_ids_and_trip_updates_trip_update(monkeypatch):
     # Patch MessageToDict to just return the dict
-    monkeypatch.setattr('src.producer.extract.MessageToDict', lambda x: x)
+    monkeypatch.setattr('src.producer.producer.MessageToDict', lambda x: x)
     feed = FakeFeed([FakeEntity('1', has_trip_update=True)])
     ids, data = extract_ids_and_trip_updates(feed)
     assert ids == ['1']
@@ -41,7 +41,7 @@ def test_extract_ids_and_trip_updates_trip_update(monkeypatch):
     assert 'trip_update' in data[0]
 
 def test_extract_ids_and_trip_updates_alert(monkeypatch):
-    monkeypatch.setattr('src.producer.extract.MessageToDict', lambda x: x)
+    monkeypatch.setattr('src.producer.producer.MessageToDict', lambda x: x)
     feed = FakeFeed([FakeEntity('2', has_alert=True)])
     ids, data = extract_ids_and_trip_updates(feed)
     assert ids == ['2']

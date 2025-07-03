@@ -15,7 +15,7 @@ USER 1001
 EXPOSE 9991
 
 
-ENTRYPOINT ["python", "extract.py"]
+ENTRYPOINT ["python", "producer.py"]
 
 
 # Image Metadata

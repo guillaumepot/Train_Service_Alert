@@ -1,4 +1,5 @@
+- Ingestion GTFS dans BDD
+    -> Partie load pipeline
 
 PUIS:
-- - Ingestion BDD (consumer)
-- - Ingestion GTFS dans BDD
+- Ingestion BDD (consumer)
