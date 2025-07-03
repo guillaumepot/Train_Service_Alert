@@ -1,4 +1,4 @@
-#src/utils/RedisEngine.py
+#src/producer/RedisEngine.py
 
 import redis
 from redis.exceptions import RedisError, ConnectionError, TimeoutError

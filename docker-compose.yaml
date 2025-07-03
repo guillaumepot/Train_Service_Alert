@@ -75,6 +75,32 @@ services:
     profiles:
       - pipeline
 
+# ----- GTFS RT producer -----
+  producer:
+    build:
+      context: ./src/producer
+      dockerfile: Dockerfile
+    image: gtfs-rt-producer:latest
+    volumes:
+      - ./logs/producer:/app/logs
+    # ports:
+    #   - "9991:9991"
+    restart: on-failure
+    depends_on:
+      - kafka1
+      - kafka2
+      - redis
+    logging:
+      driver: "local"
+      options:
+        max-size: "5m"
+        max-file: "2"
+    command: /bin/sh -c "python extract.py > /app/logs/app.log 2>&1"
+    profiles:
+      - pipeline
+
+
+
 
   # ----- Redis -----
   redis:

@@ -1,4 +1,4 @@
-# src/extract.py
+# src/producer/extract.py
 """
 Extract GTFS data from SNCF API and send them to Kafka
 """
