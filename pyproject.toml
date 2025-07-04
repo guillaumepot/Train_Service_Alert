@@ -9,6 +9,7 @@ dependencies = [
     "ipykernel>=6.29.5",
     "kafka-python>=2.2.15",
     "pandas>=2.3.0",
+    "psycopg[binary]>=3.2.9",
     "redis>=6.2.0",
     "requests>=2.32.4",
 ]

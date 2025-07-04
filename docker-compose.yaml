@@ -110,7 +110,7 @@ services:
     hostname: redis
     image: redis/redis-stack:latest
     volumes:
-      - ./data/redis:/data
+      # - ./data/redis:/data
       - ./src/redis/redis_7.2.conf:/etc/redis_conf/redis_7.2.conf
     ports:
       - '6379:6379'
