@@ -5,7 +5,7 @@ CREATE EXTENSION IF NOT EXISTS timescaledb;
 
 
 -- Trip Updates
-CREATE TABLE trip_updates (
+CREATE TABLE IF NOT EXISTS trip_updates (
     feed_timestamp     TIMESTAMPTZ NOT NULL,
     trip_id            TEXT        NOT NULL,
     start_time         TIME        NOT NULL,
@@ -23,7 +23,7 @@ SELECT create_hypertable(
 CREATE INDEX IF NOT EXISTS ix_trip_updates_trip ON trip_updates (trip_id);
 
 
-CREATE TABLE stop_time_updates (
+CREATE TABLE IF NOT EXISTS stop_time_updates (
     feed_timestamp     TIMESTAMPTZ NOT NULL,
     trip_id            TEXT        NOT NULL,
     stop_index         SMALLINT    NOT NULL,
@@ -56,7 +56,7 @@ SELECT add_retention_policy('stop_time_updates', INTERVAL '90 days');
 
 
 -- Service Alerts
-CREATE TABLE alerts (
+CREATE TABLE IF NOT EXISTS alerts (
     feed_timestamp     TIMESTAMPTZ NOT NULL,
     alert_id           TEXT        NOT NULL,
     cause              TEXT,
@@ -75,7 +75,7 @@ SELECT create_hypertable(
     migrate_data   => TRUE
 );
 
-CREATE TABLE alert_periods (
+CREATE TABLE IF NOT EXISTS alert_periods (
     feed_timestamp     TIMESTAMPTZ NOT NULL,
     alert_id           TEXT        NOT NULL,
     period_seq         INT         NOT NULL,
@@ -91,7 +91,7 @@ SELECT create_hypertable(
     migrate_data   => TRUE
 );
 
-CREATE TABLE alert_entities (
+CREATE TABLE IF NOT EXISTS alert_entities (
     feed_timestamp     TIMESTAMPTZ NOT NULL,
     alert_id           TEXT        NOT NULL,
     entity_seq         INT         NOT NULL,
@@ -126,3 +126,62 @@ SELECT add_compression_policy('alert_entities',  INTERVAL '3 days');
 SELECT add_retention_policy('alerts',          INTERVAL '30 days');
 SELECT add_retention_policy('alert_periods',   INTERVAL '30 days');
 SELECT add_retention_policy('alert_entities',  INTERVAL '30 days');
+
+
+
+-- GTFS Data
+CREATE TABLE IF NOT EXISTS agency (
+    agency_id          TEXT        NOT NULL,
+    agency_name        TEXT        NOT NULL,
+    agency_url         TEXT        NOT NULL,
+    agency_timezone    TEXT        NOT NULL,
+    agency_lang        TEXT        NOT NULL,
+    PRIMARY KEY (agency_id)
+);
+
+CREATE TABLE IF NOT EXISTS stop_times (
+    trip_id            TEXT        NOT NULL,
+    arrival_time       TIME,
+    departure_time     TIME,
+    stop_id            TEXT        NOT NULL,
+    stop_sequence      INT         NOT NULL,
+    pickup_type        SMALLINT,
+    drop_off_type      SMALLINT,
+    PRIMARY KEY (trip_id, stop_sequence)
+);
+
+CREATE TABLE IF NOT EXISTS routes (
+    route_id           TEXT        NOT NULL,
+    agency_id          TEXT        NOT NULL,
+    route_short_name   TEXT        NOT NULL,
+    route_long_name    TEXT        NOT NULL,
+    route_type         SMALLINT    NOT NULL,
+    PRIMARY KEY (route_id)
+);
+
+CREATE TABLE IF NOT EXISTS trips (
+    route_id           TEXT        NOT NULL,
+    service_id         TEXT        NOT NULL,
+    trip_id            TEXT        NOT NULL,
+    trip_headsign      TEXT,
+    direction_id       SMALLINT,
+    block_id           TEXT,
+    PRIMARY KEY (trip_id)
+);
+
+
+CREATE TABLE IF NOT EXISTS stops (
+    stop_id            TEXT        NOT NULL,
+    stop_name          TEXT        NOT NULL,
+    stop_lat           FLOAT       NOT NULL,
+    stop_lon           FLOAT       NOT NULL,
+    location_type      SMALLINT,
+    parent_station     TEXT,
+    PRIMARY KEY (stop_id)
+);
+
+-- Add foreign keys
+ALTER TABLE stop_times ADD FOREIGN KEY (trip_id) REFERENCES trips(trip_id);
+ALTER TABLE stop_times ADD FOREIGN KEY (stop_id) REFERENCES stops(stop_id);
+ALTER TABLE routes ADD FOREIGN KEY (agency_id) REFERENCES agency(agency_id);
+ALTER TABLE trips ADD FOREIGN KEY (route_id) REFERENCES routes(route_id);

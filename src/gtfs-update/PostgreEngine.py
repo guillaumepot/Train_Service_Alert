@@ -2,20 +2,20 @@
 """
 PostgreEngine class to interact with the database
 """
-import psycopg2
-import psycopg3
+import psycopg
 
 class PostgreEngine:
-    def __init__(self, host: str, port:str, user: str, password: str, db: str):
+    def __init__(self, host: str, port:str, db: str, user: str, password: str):
         self.host = host
         self.port = port
+        self.db = db
         self.user = user
         self.password = password
-        self.db = db
+
 
 
     def __enter__(self):
-        self.connect(version = 3)
+        self.connect()
         return self
     
 
@@ -23,29 +23,18 @@ class PostgreEngine:
         self.close()
 
 
-    def connect(self, version:int = 3):
+    def connect(self):
         """
         Connect to the database
         """
         try:
-            if version == 2:
-                self.conn = psycopg2.connect(
+            self.conn = psycopg.connect(
                     host=self.host,
                     port=self.port,
                     user=self.user,
                     password=self.password,
                     dbname=self.db
                 )
-
-            if version == 3:
-                self.conn = psycopg3.connect(
-                    host=self.host,
-                    port=self.port,
-                    user=self.user,
-                    password=self.password,
-                    dbname=self.db
-                )
-                self.cursor = self.conn.cursor()
         except Exception as e:
             raise e
         else:
@@ -66,19 +55,6 @@ class PostgreEngine:
             print(f"Connection to {self.host} closed")
             return
 
-
-    def begin_transaction(self):
-        """
-        Begin a transaction
-        """
-        try:
-            self.conn.begin()
-        except Exception as e:
-            raise e
-        else:
-            print("Transaction started")
-            return
-    
 
     def commit(self):
         """
@@ -117,3 +93,14 @@ class PostgreEngine:
         else:
             print("Query executed")
 
+
+    def execute_batch_query(self, query: str, params_list: list):
+        """
+        Execute a batch query with multiple parameter sets
+        """
+        try:
+            self.cursor.executemany(query, params_list)
+        except Exception as e:
+            raise e
+        else:
+            print(f"Batch query executed with {len(params_list)} parameter sets")
