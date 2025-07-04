@@ -135,10 +135,23 @@ def process_feed_data(url: str, redis_type: str, kafka_topic: str, redis_engine:
     send_to_kafka(brokers = kafka_brokers, topic = kafka_topic, data = filtered_data)
 
 
-def main():
+def main(redis_engine: RedisEngine, kafka_brokers: List[str]):
     """
     Main function to extract GTFS data from SNCF API and send them to Kafka
     """
+    # Check if Redis is up
+    print(f"Checking if Redis is up on {redis_engine.host}:{redis_engine.port}")
+    if not redis_engine.ping():
+        print("Redis is not up")
+        return
+    
+    # Check if Kafka is up
+    print(f"Checking if Kafka is up on {kafka_brokers}")
+    if not kafka_brokers:
+        print("Kafka brokers are not set")
+        return
+
+
     # Parallel processing of TU and SA feeds
     with concurrent.futures.ThreadPoolExecutor(max_workers = 2) as executor:
         tu_future = executor.submit(
@@ -147,7 +160,7 @@ def main():
             "trip_update", 
             'gtfs-rt-tu',
             redis_engine,
-            KAFKA_BROKERS
+            kafka_brokers
         )
         
         sa_future = executor.submit(
@@ -156,7 +169,7 @@ def main():
             "service_alert",
             'gtfs-rt-sa', 
             redis_engine,
-            KAFKA_BROKERS
+            kafka_brokers
         )
         
         # Wait for both tasks to complete
@@ -190,11 +203,8 @@ if __name__ == "__main__":
     # Redis engine 
     redis_engine = RedisEngine(host = REDIS_HOST, port = REDIS_PORT)
 
-    # Redis engine 
-    redis_engine = RedisEngine(host = REDIS_HOST, port = REDIS_PORT)
-
     # Start extraction loop
     while True:
-        main()
+        main(redis_engine, KAFKA_BROKERS)
         # Wait
         time.sleep(60)
