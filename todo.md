@@ -1,6 +1,7 @@
 - Ingestion GTFS dans BDD
-    -> Partie load pipeline
-        -> pg engine + tests
+    -> tests pg engine & gtfs updater
+    -> # ports postgres
+    -> Tests container updater
 
 PUIS:
 - Ingestion BDD (consumer)
