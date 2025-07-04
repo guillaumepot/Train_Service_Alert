@@ -63,7 +63,7 @@ def extract_ids_and_trip_updates(feed: gtfs_realtime_pb2.FeedMessage) -> list[di
     return all_ids, all_data
 
 
-def is_already_sent(redis_engine: RedisEngine, type:str, id: str, delay: int = 36000) -> bool:
+def is_already_sent(redis_engine: RedisEngine, type:str, id: str, delay: int = 10800) -> bool:
     """
     Check if the data has already been sent to Kafka during the last {delay} seconds (Redis cache check)
     """
@@ -126,7 +126,7 @@ def process_feed_data(url: str, redis_type: str, kafka_topic: str, redis_engine:
     # Filter out already sent data
     filtered_data = []
     for item in all_data:
-        if not is_already_sent(redis_engine, redis_type, item['id']):
+        if not is_already_sent(redis_engine, redis_type, item['id'], 10800):
             filtered_data.append(item)
     
     print(f'After filtering: {len(filtered_data)} new items for {kafka_topic}')
