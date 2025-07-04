@@ -12,6 +12,7 @@ import requests
 import time
 from typing import List
 
+
 from RedisEngine import RedisEngine
 
 
@@ -139,19 +140,6 @@ def main(redis_engine: RedisEngine, kafka_brokers: List[str]):
     """
     Main function to extract GTFS data from SNCF API and send them to Kafka
     """
-    # Check if Redis is up
-    print(f"Checking if Redis is up on {redis_engine.host}:{redis_engine.port}")
-    if not redis_engine.ping():
-        print("Redis is not up")
-        return
-    
-    # Check if Kafka is up
-    print(f"Checking if Kafka is up on {kafka_brokers}")
-    if not kafka_brokers:
-        print("Kafka brokers are not set")
-        return
-
-
     # Parallel processing of TU and SA feeds
     with concurrent.futures.ThreadPoolExecutor(max_workers = 2) as executor:
         tu_future = executor.submit(
@@ -198,7 +186,7 @@ if __name__ == "__main__":
     del data_sources
 
     # Wait to let Kafka & Redis to be ready in case of restart
-    time.sleep(60)
+    time.sleep(180)
 
     # Redis engine 
     redis_engine = RedisEngine(host = REDIS_HOST, port = REDIS_PORT)

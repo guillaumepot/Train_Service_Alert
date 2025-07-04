@@ -75,6 +75,20 @@ class RedisEngine():
             print(f"Redis GET failed for key={key}: {e}")
             return False
         
+    def ping(self):
+        """
+        Check if the Redis connection is alive.
+        """
+        self._reconnect_if_needed()
+        if not self.conn:
+            print("Redis unavailable. Cannot perform 'ping'.")
+            return False
+        try:
+            return self.conn.ping()
+        except RedisError as e:
+            print(f"Redis PING failed: {e}")
+            self.conn = None
+            return False
 
 if __name__ == '__main__':
     engine = RedisEngine(host='localhost', port = 6379)

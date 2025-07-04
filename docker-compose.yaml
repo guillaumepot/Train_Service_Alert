@@ -14,7 +14,7 @@ services:
       KAFKA_NODE_ID: 1
       CLUSTER_ID: "541739ba-e827-4c5f-8e15-fdc05a4a9052"
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,DOCKER://0.0.0.0:29092,CONTROLLER://0.0.0.0:9192
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092, DOCKER://kafka:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092, DOCKER://kafka1:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,DOCKER:PLAINTEXT,CONTROLLER:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
@@ -102,6 +102,14 @@ services:
     command: /bin/sh -c "python producer.py > /app/logs/app.log 2>&1"
     profiles:
       - pipeline
+
+
+  # ----- GTFS RT consumer -----
+
+
+  # ----- GTFS Updater -----
+
+
 
 
   # ----- Redis -----

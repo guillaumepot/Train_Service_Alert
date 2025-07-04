@@ -2,12 +2,12 @@
 """
 ETL Pipeline to update GTFS data in DB
 """
-
 import json
 import os
 import pandas as pd
 import requests
 import zipfile
+
 
 DATA_SOURCES_FILEPATH = os.getenv('DATA_SOURCES_FILEPATH', 'config/data_sources.json')
 
@@ -124,8 +124,8 @@ def pipeline_load(df_dict: dict) -> None:
 
 
 # ETL (main)
-def main(url:str):
-    df_dict = pipeline_extract(url)
+def main(variables: dict):
+    df_dict = pipeline_extract(variables['GTFS_URL'])
     df_dict = pipeline_transform(df_dict)
     # Debug
     # for key, df in df_dict.items():
@@ -137,8 +137,16 @@ if __name__ == "__main__":
     # Fetch data sources URL
     with open(DATA_SOURCES_FILEPATH, 'r') as f:
         data_sources = json.load(f)
-    GTFS_URL = data_sources['gtfs_url']
+
+    var_dict = {
+        'GTFS_URL': data_sources['gtfs_url'],
+        'POSTGRES_HOST': data_sources['postgres_host'],
+        'POSTGRES_PORT': data_sources['postgres_port'],
+        'POSTGRES_DB': data_sources['postgres_db'],
+        'POSTGRES_USER': os.getenv('POSTGRES_USER'),
+        'POSTGRES_PASSWORD': os.getenv('POSTGRES_PASSWORD')
+    }
     del data_sources
 
     # Start pipeline
-    main(GTFS_URL)
+    main(var_dict)
