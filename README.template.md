@@ -19,8 +19,16 @@
 [beautiful_soup_url]: https://www.crummy.com/software/BeautifulSoup/
 [elasticsearch_badge]: https://img.shields.io/badge/Elasticsearch-005571?style=for-the-badge&logo=elasticsearch&logoColor=white
 [elasticsearch_url]: https://www.elastic.co/
+[fastapi_badge]: https://img.shields.io/badge/FastAPI-0056B3?style=for-the-badge&logo=fastapi&logoColor=white
+[fastapi_url]: https://fastapi.tiangolo.com/
 [flask_badge]: https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white
 [flask_url]: https://flask.palletsprojects.com/
+[kafka_badge]: https://img.shields.io/badge/Apache%20Kafka-231F20?style=for-the-badge&logo=apache-kafka&logoColor=white
+[kafka_url]: https://kafka.apache.org/
+[redis_badge]: https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white
+[redis_url]: https://redis.io/
+[postgresql_badge]: https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white
+[postgresql_url]: https://www.postgresql.org/
 [docker_badge]: https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white
 [docker_url]: https://www.docker.com/
 
@@ -71,6 +79,7 @@
   <summary>Click to expand</summary>
   <ol>
     <li><a href="#about-the-project">About The Project</a></li>
+    <li><a href="#what-is-gtfs">What is GTFS</a></li>
     <li><a href="#built-with">Built With</a></li>
   </ol>
 </details>
@@ -80,10 +89,32 @@
 
 [WIP]
 
+### What is GTFS
+```text
+The General Transit Feed Specification (GTFS) is an Open Standard used to distribute relevant information about transit systems to riders. It allows public transit agencies to publish their transit data in a format that can be consumed by a wide variety of software applications.
+
+GTFS consists of two main parts:
+• GTFS Schedule: Contains information about routes, schedules, fares, and geographic transit details
+• GTFS Realtime: Contains trip updates, vehicle positions, and service alerts
+
+This project focuses on French TGV (high-speed train) data provided by SNCF.
+```
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ## Built With
 
-* [![Python][python_badge]][python_url]
-* [![Docker][docker_badge]][docker_url]
+### Core Technologies
+* [![Python][python-icon-url]](https://www.python.org/) - Main programming language
+* [![Docker][docker-icon-url]](https://www.docker.com/) - Containerization
+* [![FastAPI][fastapi-icon-url]](https://fastapi.tiangolo.com/) - Web API framework
+
+### Data Processing
+* [![Kafka][kafka-icon-url]](https://kafka.apache.org/) - Message streaming
+* [![Redis][redis-icon-url]](https://redis.io/) - Caching layer
+
+### Data Storage
+* [![PostgreSQL][postgresql-icon-url]](https://www.postgresql.org/) - GTFS schedule data
+
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

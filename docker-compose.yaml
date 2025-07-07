@@ -5,9 +5,9 @@ services:
     image: confluentinc/cp-kafka:latest
     container_name: kafka1
     hostname: kafka1
-    # ports:
-    #   - "9092:9092"
-    #   - "9192:9192"
+    ports:
+      - "9092:9092"
+      - "9192:9192"
     environment:
       KAFKA_KRAFT_MODE: "true"
       KAFKA_PROCESS_ROLES: controller,broker
@@ -34,9 +34,9 @@ services:
     image: confluentinc/cp-kafka:latest
     container_name: kafka2
     hostname: kafka2
-    # ports:
-    #   - "9093:9093"
-    #   - "9193:9193"
+    ports:
+      - "9093:9093"
+      - "9193:9193"
     environment:
       KAFKA_KRAFT_MODE: "true"
       KAFKA_PROCESS_ROLES: controller,broker
@@ -108,8 +108,30 @@ services:
 
 
   # ----- GTFS Updater -----
-
-
+  gtfs-updater:
+    build:
+      context: ./src/gtfs_update
+      dockerfile: Dockerfile
+    image: gtfs-updater:latest
+    container_name: gtfs-updater
+    volumes:
+      - ./logs/gtfs-updater:/app/logs
+      - ./config/data_sources.json:/app/config/data_sources.json
+    environment:
+      - DATA_SOURCES_FILEPATH=/app/config/data_sources.json
+      - POSTGRES_USER=${POSTGRES_USER} # Var must be exported on host machine
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    # ports:
+    #   - "9990:9990"
+    restart: on-failure
+    logging:
+      driver: "local"
+      options:
+        max-size: "5m"
+        max-file: "2"
+    command: /bin/sh -c "python gtfs_update.py > /app/logs/app.log 2>&1"
+    profiles:
+      - gtfs-update
 
 
   # ----- Redis -----
@@ -159,7 +181,7 @@ services:
 
  # ----- PGAdmin -----
   pgadmin:
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:latest
     container_name: pgadmin
     user: "5050:5050"
     environment:
