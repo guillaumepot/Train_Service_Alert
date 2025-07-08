@@ -12,8 +12,7 @@ ENV PYTHONUNBUFFERED=1
 RUN adduser --disabled-password --gecos '' --uid 1001 appuser && chown -R appuser /app
 USER 1001
 
-EXPOSE 9991
-
+EXPOSE 9992
 
 ENTRYPOINT ["python", "consumer.py"]
 

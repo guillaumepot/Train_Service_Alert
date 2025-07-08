@@ -31,6 +31,10 @@
 [postgresql_url]: https://www.postgresql.org/
 [docker_badge]: https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white
 [docker_url]: https://www.docker.com/
+[dbt_badge]: https://img.shields.io/badge/dbt-FF69B4?style=for-the-badge&logo=dbt&logoColor=white
+[dbt_url]: https://www.getdbt.com/
+[protobuf_badge]: https://img.shields.io/badge/protobuf-2F3134?style=for-the-badge&logo=protobuf&logoColor=white
+[protobuf_url]: https://protobuf.dev/
 
 <!-- README -->
 <a id="readme-top"></a>
