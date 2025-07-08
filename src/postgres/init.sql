@@ -47,11 +47,11 @@ CREATE INDEX IF NOT EXISTS ix_stu_trip  ON stop_time_updates (trip_id, stop_id);
 
 ALTER TABLE trip_updates      SET (timescaledb.compress, timescaledb.compress_segmentby = 'trip_id');
 ALTER TABLE stop_time_updates SET (timescaledb.compress, timescaledb.compress_segmentby = 'trip_id');
-SELECT add_compression_policy('trip_updates',      INTERVAL '3 days');
-SELECT add_compression_policy('stop_time_updates', INTERVAL '3 days');
+SELECT add_compression_policy('trip_updates',      INTERVAL '30 days');
+SELECT add_compression_policy('stop_time_updates', INTERVAL '30 days');
 
-SELECT add_retention_policy('trip_updates',      INTERVAL '90 days');
-SELECT add_retention_policy('stop_time_updates', INTERVAL '90 days');
+SELECT add_retention_policy('trip_updates',      INTERVAL '1095 days');
+SELECT add_retention_policy('stop_time_updates', INTERVAL '1095 days');
 
 
 
