@@ -151,8 +151,9 @@ services:
       - ./config/data_sources.json:/app/config/data_sources.json
     environment:
       - DATA_SOURCES_FILEPATH=/app/config/data_sources.json
-      - POSTGRES_USER=${POSTGRES_USER} # Var must be exported on host machine
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    secrets:
+      - postgres_user
+      - postgres_password
     # ports:
     #   - "9990:9990"
     restart: on-failure

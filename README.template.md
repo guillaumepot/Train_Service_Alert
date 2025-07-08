@@ -35,6 +35,8 @@
 [dbt_url]: https://www.getdbt.com/
 [protobuf_badge]: https://img.shields.io/badge/protobuf-2F3134?style=for-the-badge&logo=protobuf&logoColor=white
 [protobuf_url]: https://protobuf.dev/
+[GCP_badge]: https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white
+[GCP_url]: https://cloud.google.com/
 
 <!-- README -->
 <a id="readme-top"></a>
@@ -115,10 +117,11 @@ This project focuses on French TGV (high-speed train) data provided by SNCF.
 ### Data Processing
 * [![Kafka][kafka-icon-url]](https://kafka.apache.org/) - Message streaming
 * [![Redis][redis-icon-url]](https://redis.io/) - Caching layer
+* [![dbt][dbt-icon-url]](https://www.getdbt.com/) - Data transformation
 
 ### Data Storage
 * [![PostgreSQL][postgresql-icon-url]](https://www.postgresql.org/) - GTFS schedule data
-
+* [![GCP][GCP-icon-url]](https://cloud.google.com/) - Data storage
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
