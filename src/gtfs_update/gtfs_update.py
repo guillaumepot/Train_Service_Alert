@@ -13,7 +13,30 @@ from PostgreEngine import PostgreEngine
 
 DATA_SOURCES_FILEPATH = os.getenv('DATA_SOURCES_FILEPATH', 'config/data_sources.json')
 
-
+def read_secret_or_env(secret_name, env_name = None):
+    """
+    Read a secret from Docker secrets file, fallback to environment variable
+    
+    Args:
+        secret_name: Name of the secret file in /run/secrets/
+        env_name: Environment variable name (defaults to secret_name.upper())
+    
+    Returns:
+        The secret value or None if not found
+    """
+    if env_name is None:
+        env_name = secret_name.upper()
+    
+    secret_path = f'/run/secrets/{secret_name}'
+    try:
+        with open(secret_path, 'r') as f:
+            value = f.read().strip()
+            if value:
+                return value
+    except (FileNotFoundError, IOError, PermissionError):
+        pass
+    
+    return os.getenv(env_name)
 
 # EXTRACT
 def download_gtfs_data(url: str) -> None:
@@ -283,8 +306,8 @@ if __name__ == "__main__":
         'POSTGRES_HOST': data_sources['postgres_host'],
         'POSTGRES_PORT': data_sources['postgres_port'],
         'POSTGRES_DB': data_sources['postgres_db'],
-        'POSTGRES_USER': os.getenv('POSTGRES_USER'),
-        'POSTGRES_PASSWORD': os.getenv('POSTGRES_PASSWORD')
+        'POSTGRES_USER': read_secret_or_env('postgres_user', 'POSTGRES_USER'),
+        'POSTGRES_PASSWORD': read_secret_or_env('postgres_password', 'POSTGRES_PASSWORD')
     }
     del data_sources
 

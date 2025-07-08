@@ -10,7 +10,7 @@ docker compose --profile administration up -d
 docker compose --profile pipeline up -d
 
 **GTFS update:**
-docker compose --profile gtfs-update up -d
+docker compose --profile gtfs-update up
 
 
 **Config**
