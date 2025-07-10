@@ -1,0 +1,5 @@
+gtfs-realtime-bindings>=1.0.0
+kafka-python>=2.2.15
+pandas>=2.3.0
+redis>=6.2.0
+requests>=2.32.4

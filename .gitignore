@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+.pytest_cache/
+.ipynb_checkpoints
+.ruff_cache/
+
+# Logs
+*.log
+logs/
+
+# Environments
+.env
+.venv/
+venv/
+
+# Data
+data/kafka/
+data/redis/
+data/postgres/
+data/pgadmin/
+
+# Secrets
+*.secret

@@ -1,0 +1,243 @@
+services:
+
+  # ----- Kafka -----
+  kafka1:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka1
+    hostname: kafka1
+    # ports:
+    #   - "9092:9092"
+    #   - "9192:9192"
+    environment:
+      KAFKA_KRAFT_MODE: "true"
+      KAFKA_PROCESS_ROLES: controller,broker
+      KAFKA_NODE_ID: 1
+      CLUSTER_ID: "541739ba-e827-4c5f-8e15-fdc05a4a9052"
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,DOCKER://0.0.0.0:29092,CONTROLLER://0.0.0.0:9192
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092, DOCKER://kafka1:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,DOCKER:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka1:9192, 2@kafka2:9193"
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_LOG_RETENTION_HOURS: 72
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./data/kafka/broker1:/var/lib/kafka/data
+    profiles:
+      - pipeline
+
+  kafka2:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka2
+    hostname: kafka2
+    # ports:
+    #   - "9093:9093"
+    #   - "9193:9193"
+    environment:
+      KAFKA_KRAFT_MODE: "true"
+      KAFKA_PROCESS_ROLES: controller,broker
+      KAFKA_NODE_ID: 2
+      CLUSTER_ID: "541739ba-e827-4c5f-8e15-fdc05a4a9052"
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9093,DOCKER://0.0.0.0:29093,CONTROLLER://0.0.0.0:9193
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9093, DOCKER://kafka2:29093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,DOCKER:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka1:9192, 2@kafka2:9193"
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_LOG_RETENTION_HOURS: 168
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./data/kafka/broker2:/var/lib/kafka/data
+    depends_on:
+      - kafka1
+    profiles:
+      - pipeline
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    hostname: kafka-ui
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka1:29092,kafka2:29093
+    restart: no
+    depends_on:
+      - kafka1
+    profiles:
+      - pipeline
+
+# ----- GTFS RT producer -----
+  producer:
+    build:
+      context: ./src/producer
+      dockerfile: Dockerfile
+    image: gtfs-rt-producer:latest
+    container_name: gtfs-rt-producer
+    volumes:
+      - ./logs/producer:/app/logs
+      - ./config/data_sources.json:/app/config/data_sources.json
+    environment:
+      - DATA_SOURCES_FILEPATH=/app/config/data_sources.json
+    # ports:
+    #   - "9991:9991"
+    restart: unless-stopped
+    depends_on:
+      - kafka1
+      - kafka2
+      - redis
+    logging:
+      driver: "local"
+      options:
+        max-size: "5m"
+        max-file: "2"
+    command: /bin/sh -c "python producer.py > /app/logs/app.log 2>&1"
+    profiles:
+      - pipeline
+
+
+  # ----- GTFS RT consumer -----
+  consumer:
+    build:
+      context: ./src/consumer
+      dockerfile: Dockerfile
+    image: gtfs-rt-consumer:latest
+    container_name: gtfs-rt-consumer
+    volumes:
+      - ./logs/consumer:/app/logs
+      - ./config/data_sources.json:/app/config/data_sources.json
+    environment:
+      - DATA_SOURCES_FILEPATH=/app/config/data_sources.json
+    secrets:
+      - postgres_user
+      - postgres_password
+    # ports:
+    #   - "9992:9992"
+    restart: unless-stopped
+    depends_on:
+      - kafka1
+      - kafka2
+      - producer
+    logging:
+      driver: "local"
+      options:
+        max-size: "5m"
+        max-file: "2"
+    command: /bin/sh -c "python consumer.py > /app/logs/app.log 2>&1"
+    profiles:
+      - pipeline
+
+
+  # ----- GTFS Updater -----
+  gtfs-updater:
+    build:
+      context: ./src/gtfs_update
+      dockerfile: Dockerfile
+    image: gtfs-updater:latest
+    container_name: gtfs-updater
+    volumes:
+      - ./logs/gtfs-updater:/app/logs
+      - ./config/data_sources.json:/app/config/data_sources.json
+    environment:
+      - DATA_SOURCES_FILEPATH=/app/config/data_sources.json
+    secrets:
+      - postgres_user
+      - postgres_password
+    # ports:
+    #   - "9990:9990"
+    restart: on-failure
+    logging:
+      driver: "local"
+      options:
+        max-size: "5m"
+        max-file: "2"
+    command: /bin/sh -c "python gtfs_update.py > /app/logs/app.log 2>&1"
+    profiles:
+      - gtfs-update
+
+
+  # ----- Redis -----
+  redis:
+    container_name: redis
+    hostname: redis
+    image: redis/redis-stack:latest
+    volumes:
+      # - ./data/redis:/data
+      - ./src/redis/redis_7.2.conf:/etc/redis_conf/redis_7.2.conf
+    # ports:
+    #   - '6379:6379'
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 15s
+      timeout: 13s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped  
+    command: [ "redis-server", "/etc/redis_conf/redis_7.2.conf" ]
+    profiles:
+      - pipeline
+
+  # ----- Postgres -----
+  postgres:
+    container_name: postgres-gtfs
+    image: timescale/timescaledb:2.20.0-pg17
+    environment:
+      - POSTGRES_USER_FILE=/run/secrets/postgres_user
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+      - POSTGRES_DB=gtfs
+      - TIMESCALEDB_TELEMETRY=off
+    secrets:
+      - postgres_user
+      - postgres_password
+    volumes:
+      - ./data/postgres/data:/var/lib/postgresql/data
+      - ./data/postgres/backups:/backups
+      - ./src/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $(cat /run/secrets/postgres_user) -d gtfs"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    restart: unless-stopped  
+    mem_limit: 2g
+    cpus: 2.0
+    profiles:
+      - database
+
+ # ----- PGAdmin -----
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    user: "5050:5050"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    volumes:
+      - ./data/pgadmin:/var/lib/pgadmin
+    ports:
+      - "8081:80"
+    restart: no
+    profiles:
+      - administration
+
+
+
+secrets:
+  postgres_user:
+    file: ./secrets/postgres_user.secret
+  postgres_password:
+    file: ./secrets/postgres_password.secret

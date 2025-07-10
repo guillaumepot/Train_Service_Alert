@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: gtfs
+    schema: public
+    tables:
+      - name: trip_updates
+      - name: stop_time_updates
+      - name: alerts
+      - name: alert_entities
+      - name: stop_times
+      - name: routes
+      - name: trips
+      - name: stops
