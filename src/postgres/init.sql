@@ -149,3 +149,16 @@ ALTER TABLE stop_times ADD FOREIGN KEY (trip_id) REFERENCES trips(trip_id);
 ALTER TABLE stop_times ADD FOREIGN KEY (stop_id) REFERENCES stops(stop_id);
 ALTER TABLE routes ADD FOREIGN KEY (agency_id) REFERENCES agency(agency_id);
 ALTER TABLE trips ADD FOREIGN KEY (route_id) REFERENCES routes(route_id);
+
+
+
+
+-- Read only role
+CREATE ROLE read_only_gtfs WITH LOGIN PASSWORD 'f1e!z6F5V9za5d-gf/51zDz4F%';
+GRANT CONNECT ON DATABASE gtfs TO read_only_gtfs;
+GRANT USAGE ON SCHEMA public TO read_only_gtfs;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO read_only_gtfs;
+GRANT SELECT ON ALL SEQUENCES IN SCHEMA public TO read_only_gtfs;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO read_only_gtfs;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON SEQUENCES TO read_only_gtfs;
