@@ -6,9 +6,11 @@ WITH recent AS (
 SELECT
     trip_headsign,
     stop_name,
+    stop_lat,
+    stop_lon,
     MAX(arrival_delay) AS max_arrival_delay,
     MAX(departure_delay) AS max_departure_delay
 FROM recent
 WHERE arrival_delay > 0
 OR departure_delay > 0
-GROUP BY trip_headsign, stop_name
+GROUP BY trip_headsign, stop_name, stop_lat, stop_lon
