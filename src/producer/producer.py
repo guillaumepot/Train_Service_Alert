@@ -195,4 +195,4 @@ if __name__ == "__main__":
     while True:
         main(redis_engine, KAFKA_BROKERS)
         # Wait
-        time.sleep(60)
+        time.sleep(300)

@@ -353,8 +353,8 @@ class GTFSConsumer:
                     print(f"Error during data ingestion: {e}")
                     continue
                 finally:
-                    # Sleep for 1 minute to avoid consuming messages too fast
-                    time.sleep(60)
+                    # Sleep for 5 minute to avoid consuming messages too fast
+                    time.sleep(300)
 
 if __name__ == "__main__":
     # Fetch data sources URL

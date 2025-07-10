@@ -38,14 +38,45 @@ jobs:
     needs: pre-commit-check
     if: needs.pre-commit-check.result == 'failure'
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
       - name: Create Issue
         uses: actions/github-script@v6
         with:
           script: |
-            github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.name,
-              title: '❌ Pre-commit Checks Failed on ${{ github.ref_name }}',
+            const { owner, repo } = context.repo;
+            
+            // Check if issue already exists
+            const existingIssues = await github.rest.issues.listForRepo({
+              owner,
+              repo,
+              state: 'open',
+              labels: 'bug,tests'
+            });
+
+            const existingIssue = existingIssues.data.find(issue =>
+              issue.title.includes('❌ Pre-commit Checks Failed') &&
+              !issue.pull_request
+            );
+
+            if (!existingIssue) {
+              await github.rest.issues.create({
+                owner,
+                repo,
+                title: '❌ Pre-commit Checks Failed on ${{ github.ref_name }}',
+                body: `Pre-commit checks failed on branch \`${{ github.ref_name }}\`.
+                
+**Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+**Commit:** ${{ github.sha }}
+
+Please check the workflow logs and fix the issues.`,
+                labels: ['bug', 'tests']
+              });
+              console.log('Created new issue for pre-commit failure');
+            } else {
+              console.log('Issue already exists for pre-commit failure');
+            }
 
   close_issue_if_fixed:
     name: Close Issue if Pre-commit Fixed
@@ -53,13 +84,18 @@ jobs:
     needs: pre-commit-check
     if: needs.pre-commit-check.result == 'success'
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
       - name: Close matching issue
         uses: actions/github-script@v6
         with:
           script: |
+            const { owner, repo } = context.repo;
+            
             const issues = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.name,
+              owner,
+              repo,
               state: 'open',
               labels: 'bug,tests'
             });
@@ -71,18 +107,19 @@ jobs:
 
             if (issue) {
               await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.name,
+                owner,
+                repo,
                 issue_number: issue.number,
-                body: '✅ Pre-commit checks now pass. Closing this issue automatically.'
+                body: '✅ Pre-commit checks now pass. Closing this issue automatically.\n\n**Fixed in:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
               });
 
               await github.rest.issues.update({
-                owner: context.repo.owner,
-                repo: context.repo.name,
+                owner,
+                repo,
                 issue_number: issue.number,
                 state: 'closed'
               });
+              console.log(`Closed issue #${issue.number}`);
             } else {
-              console.log('No matching issue found.');
+              console.log('No matching issue found to close.');
             }
