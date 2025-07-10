@@ -70,6 +70,22 @@ CREATE TABLE IF NOT EXISTS alerts (
     PRIMARY KEY (alert_id, active_period_start, active_period_end)
 );
 
+SELECT create_hypertable(
+    'alerts',
+    'active_period_start',
+    'active_period_end',
+    if_not_exists => TRUE,
+    migrate_data   => TRUE
+);
+
+
+CREATE INDEX IF NOT EXISTS ix_alerts_alert_id  ON alerts (alert_id);
+
+ALTER TABLE alerts      SET (timescaledb.compress, timescaledb.compress_segmentby = 'alert_id');
+SELECT add_compression_policy('alerts',      INTERVAL '30 days');
+SELECT add_retention_policy('alerts',      INTERVAL '1095 days');
+
+
 CREATE TABLE IF NOT EXISTS alert_entities (
     trip_id            TEXT        NOT NULL,
     alert_id           TEXT        NOT NULL,
