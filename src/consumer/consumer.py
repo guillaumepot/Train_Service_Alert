@@ -271,19 +271,27 @@ class GTFSConsumer:
 
     # Ingestion functions
     def ingest_data(self, engine: PostgreEngine, table_name:str, data:List[dict]) -> None:
-        """Ingest data into a PostgreSQL table"""
+        """Ingest data into a PostgreSQL table with upsert functionality"""
         if not data:
             return
             
-        # Query
-        query = f"INSERT INTO {table_name} ({', '.join(data[0].keys())}) VALUES ({', '.join(['%s'] * len(data[0]))})"
+        columns = list(data[0].keys())
+        placeholders = ', '.join(['%s'] * len(columns))
+        update_clause = ', '.join([f"{col} = EXCLUDED.{col}" for col in columns])
+        
+        # Query with conflict resolution - update on conflict
+        query = f"""
+        INSERT INTO {table_name} ({', '.join(columns)}) 
+        VALUES ({placeholders}) 
+        ON CONFLICT DO UPDATE SET {update_clause}
+        """
         
         # Convert list of dicts to list of tuples for batch insertion
         params_list = [tuple(row.values()) for row in data]
         
         # Execute batch query
         engine.execute_batch_query(query, params_list)
-        print(f"Inserted {len(data)} records into {table_name}")
+        print(f"Processed {len(data)} records for {table_name} (inserted or updated)")
 
     # Main function (pipeline)
     def run(self) -> None:
